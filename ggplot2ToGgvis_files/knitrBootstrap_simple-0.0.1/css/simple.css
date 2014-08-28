@@ -1,0 +1,87 @@
+/* make the left border larger to fit the collapse button */
+.panel {
+    border-left-width: 10px;
+    position: relative;
+}
+.panel button {
+    position: absolute;
+    top: 0px;
+    left: -9px;
+    border: 0px;
+    height:100%;
+    width: 10px;
+    color: transparent;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.collapsed button {
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+}
+button span {
+    left: -6px;
+}
+.collapsed span {
+  left: -7px;
+}
+.panel.collapsed {
+  display: inline-block;
+  height:24px;
+  width:11px;
+}
+/* remove the border and margin for pre blocks */
+pre {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+}
+
+/* Magnific overrides to give transparent images a white background */
+.mfp-image img{
+  background: white;
+}
+.mfp-figure:after {
+  background: white;
+}
+
+#toc {
+  padding: 10px 0px;
+  margin:0;
+  border:0;
+  position: fixed;
+  overflow-y: auto;
+}
+
+/* Sidebar Styles */
+
+.sidebar ul {
+  list-style: none;
+}
+
+.sidebar > ul {
+  margin: 0;
+  padding: 0;
+}
+
+.sidebar > ul li {
+  text-indent: 20px;
+}
+
+.sidebar > ul li li {
+    text-indent: 10px;
+}
+
+.sidebar > ul li a {
+    display: block;
+    text-decoration: none;
+}
+
+.sidebar > ul li a:hover {
+    text-decoration: none;
+}
+
+.sidebar > ul li a:active,
+.sidebar > ul li a:focus {
+    text-decoration: none;
+}
