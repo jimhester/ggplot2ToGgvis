@@ -363,10 +363,12 @@ We hope that this short tutorial gave you a sense of how [ggplot2][] and
 [ggvis][] function as powerful and flexible visualization packages, and how to
 convert between them.
 
+If you liked this tutorial also see [plyrToDplyr](http://jimhester.github.io/plyrToDplyr).
+
 > [Original ggplot2 Tutorial by Alex Yakubovich, Cathia Badiere and Wei-Hao Hwang](http://rpubs.com/ayy/2176)<br>
 > Author: [Jim Hester](http://jimhester.com)<br>
 > Created: 2014 Jul 30 12:23:19 PM<br>
-> Last Modified: 2014 Aug 28 02:37:10 PM
+> Last Modified: 2014 Aug 28 03:47:00 PM
 
 [ggplot2]: https://github.com/hadley/ggplot2
 [dplyr]: https://github.com/hadley/dplyr

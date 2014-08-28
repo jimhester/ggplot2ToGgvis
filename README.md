@@ -12,3 +12,5 @@ git clone https://github.com/jimhester/ggplot2ToGgvis.git
 
 make
 ```
+
+If you liked this tutorial also see [plyrToDplyr](http://jimhester.github.io/plyrToDplyr).
