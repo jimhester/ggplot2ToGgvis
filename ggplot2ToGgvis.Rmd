@@ -2,7 +2,7 @@
 output:
   knitrBootstrap:::simple_document:
     toc: true
-    theme: amelia
+    theme: paper
     highlight: 'solarized_dark'
 ---
 
@@ -366,7 +366,7 @@ convert between them.
 > [Original ggplot2 Tutorial by Alex Yakubovich, Cathia Badiere and Wei-Hao Hwang](http://rpubs.com/ayy/2176)<br>
 > Author: [Jim Hester](http://jimhester.com)<br>
 > Created: 2014 Jul 30 12:23:19 PM<br>
-> Last Modified: 2014 Aug 28 01:33:08 PM
+> Last Modified: 2014 Aug 28 02:37:10 PM
 
 [ggplot2]: https://github.com/hadley/ggplot2
 [dplyr]: https://github.com/hadley/dplyr
