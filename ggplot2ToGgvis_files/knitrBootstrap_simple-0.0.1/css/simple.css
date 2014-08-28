@@ -77,11 +77,13 @@ pre {
     text-decoration: none;
 }
 
-.sidebar > ul li a:hover {
+.sidebar > ul li:hover {
     text-decoration: none;
+    background-color: transparent;
 }
 
-.sidebar > ul li a:active,
-.sidebar > ul li a:focus {
+.sidebar > ul li:active,
+.sidebar > ul li:focus {
     text-decoration: none;
+    background-color: transparent;
 }
