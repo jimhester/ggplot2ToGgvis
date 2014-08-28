@@ -1,0 +1,375 @@
+---
+output:
+  knitrBootstrap:::simple_document:
+    toc: true
+    theme: amelia
+    highlight: 'solarized_dark'
+---
+
+```{r plyrTodplyr_setup, cache=FALSE, include=FALSE}
+opts_chunk$set(message = FALSE, warning = FALSE, bootstrap.thumbnail = FALSE)
+clean_environment = (function() {
+  existing_packages = loaded_pkgs = names(sessionInfo()$otherPkgs)
+  existing_objects = c('clean_environment', ls(envir=parent.frame()))
+  function() {
+    loaded_pkgs = Filter(function(x) !x %in% existing_packages, names(sessionInfo()$otherPkgs))
+    if(!is.null(loaded_pkgs)){
+      lapply(paste0('package:', loaded_pkgs), detach, character.only = TRUE, unload = TRUE, force = TRUE)
+    }
+    rm(list=Filter(function(x) !x %in% existing_objects, ls(envir=parent.frame())), envir=parent.frame())
+    invisible()
+  }
+})()
+```
+<style type="text/css">
+div.container { width: 95%; }
+.row {
+margin-left: 0;
+margin-right: 0;
+}
+</style>
+<script>
+$(function() {
+  "use strict";
+  $('p').addClass('lead');
+});
+</script>
+
+```{r ggplot2ToGgvis_setup, echo=F}
+read_chunk('R/ggplot2.R')
+read_chunk('R/ggvis.R')
+set.seed(49)
+```
+
+# Ggplot2 To Ggvis #
+This is a simple demonstration of how to convert existing [ggplot2][] code to use
+the [ggvis][] package.  For each example the ggplot2 implementation is
+on the left, the ggvis implementation is on the right.  Some care has been
+taken to make the outputs functionally equivalent.
+
+Ggvis is still in the early stages, so there are not 1 to 1 equivalents for all ggplot2 functionality.
+
+Simple example:
+- ggplot2: `ggplot(mtcars, aes(x=disp, y=mpg)) + geom_point()`
+- ggvis: `mtcars %>% ggvis(x=~disp, y=~mpg) %>% layer_points()`
+
+******
+
+# Getting started
+
+This section explains how to set up the package and make some basic plots.
+[ggvis][] works best when coupled with [dplyr][].
+
+<div class='row'> <div class='col-md-6'>
+## ggplot2
+[Download Source](https://github.com/jimhester/Ggplot2ToGgvis/raw/master/R/ggplot2.R)
+```{r fig.width=5.75, fig.height=5.75}
+<<setup_ggplot2>>
+```
+</div> <div class='col-md-6'>
+## ggvis
+[Download Source](https://github.com/jimhester/Ggplot2ToGgvis/raw/master/R/ggvis.R)
+```{r fig.width=5, fig.height=5}
+<<setup_ggvis>>
+```
+</div> </div>
+
+We will use the diamond dataset included with `ggplot2`.  We are also going to
+only sample a subset of the rows to improve loading times:
+
+<div class='row'> <div class='col-md-6'>
+```{r fig.width=5.75, fig.height=5.75}
+<<load_diamond_ggplot2>>
+```
+</div> <div class='col-md-6'>
+```{r fig.width=5, fig.height=5}
+<<load_diamond_ggvis>>
+```
+</div> </div>
+
+`qplot()` shares much of its syntax with the standard `plot()` function in R.
+`ggvis()` is roughly equivalent to `qplot()` and `plot()`.  They all accept $x$
+and $y$ arguments as values from the workspace, or fields from a data frame:
+
+<div class='row'> <div class='col-md-6'>
+```{r fig.width=5.75, fig.height=5.75}
+<<qplot_ggplot2>>
+```
+</div> <div class='col-md-6'>
+```{r fig.width=5, fig.height=5}
+<<qplot_ggvis>>
+```
+</div> </div>
+
+`qplot()` and `ggvis()` make it very easy to change the colour or scale
+aesthetics to display information about additional variables.
+
+<div class='row'> <div class='col-md-6'>
+```{r fig.width=5.75, fig.height=5.75}
+<<qplot_colour_ggplot2>>
+```
+</div> <div class='col-md-6'>
+```{r fig.width=5, fig.height=5}
+<<qplot_colour_ggvis>>
+```
+</div> </div>
+
+A legend is automatically corrected, with the colours of the points mapping to
+the clarity as we want. We would have to do a lot more work to create this plot
+with base graphics.
+
+To reduce overplotting (clutter), sometimes it helps to add
+transparency. This specified by the `alpha` field in [ggplot2][] and `opacity` in [ggvis][]. Specifying this as `1/2`
+means that 2 points need to overlay to achieve an opacity of one (transparency
+of zero).
+
+<div class='row'> <div class='col-md-6'>
+```{r fig.width=5.75, fig.height=5.75}
+<<qplot_overplotting_ggplot2>>
+```
+</div> <div class='col-md-6'>
+```{r fig.width=5, fig.height=5}
+<<qplot_overplotting_ggvis>>
+```
+</div> </div>
+
+This visualization suggests that price depends on carat through a power law
+which is different for every level of clarity. We can use a log-log plot to see
+this more clearly.
+
+`qplot` and `ggvis` both accept transformations of variables in their arguments.
+
+<div class='row'> <div class='col-md-6'>
+```{r fig.width=5.75, fig.height=5.75}
+<<qplot_log_ggplot2>>
+```
+</div> <div class='col-md-6'>
+```{r fig.width=5, fig.height=5}
+<<qplot_log_ggvis>>
+```
+</div> </div>
+
+Next, we will explore how we can use colour and scale to visualize some regression diagnostics.
+We will use some synthetic data on height and weight for 15 individuals:
+
+<div class='row'> <div class='col-md-6'>
+```{r fig.width=5.75, fig.height=5.75}
+<<hw_load_ggplot2>>
+```
+</div> <div class='col-md-6'>
+```{r fig.width=5, fig.height=5}
+<<hw_load_ggvis>>
+```
+</div> </div>
+
+We can visualize all the data on one plot by plotting health against weight, and scaling each point by the height:
+
+<div class='row'><div class='col-md-6'>
+```{r fig.width=5.75, fig.height=5.75}
+<<hw_plot_ggplot2>>
+```
+</div><div class='col-md-6'>
+```{r fig.width=5, fig.height=5}
+<<hw_plot_ggvis>>
+```
+</div></div>
+
+This plot is simpler than a full 3d visualization, but it of course carries
+less information. In particular, we can't see the regression plane.
+
+Let's consider the marginal regression of health on weight. We can easily
+generate a scatter plot showing the line of best fit and the 95% confidence
+intervals:
+
+<div class='row'> <div class='col-md-6'>
+```{r fig.width=5.75, fig.height=5.75}
+<<hw_lm_ggplot2>>
+```
+</div> <div class='col-md-6'>
+```{r fig.width=5, fig.height=5}
+<<hw_lm_ggvis>>
+```
+</div> </div>
+
+We can display the data, residuals and the leverage for the regression all on one plot:
+
+<div class='row'> <div class='col-md-6'>
+```{r fig.width=5.75, fig.height=5.75}
+<<hw_regression_ggplot2>>
+```
+</div> <div class='col-md-6'>
+```{r fig.width=5, fig.height=5}
+<<hw_regression_ggvis>>
+```
+</div> </div>
+
+We see clearly how the leverage changes as only a function of the x-values
+(their z-scores, to be exact). The plot makes it easy to pick out the different
+types of outliers. We see two points with a very high leverage but small
+residual - type III outliers.
+
+******
+
+# Advanced use
+
+## Working with ggplot
+
+Components of a [ggplot2][] plot:
+
+* `data`: Data frame
+* `geoms`: Geometric Objects
+* `aes`: Mapping between variables (data) and aesthetics (visual properties of `geoms`)
+* `stat`: Statistical Transformation
+
+
+Components of a [ggvis][] plot:
+
+* `data`: Data frame
+* `layer`: Layers of plot components
+* `mappings`: Mapping between variables (data) and aesthetics (visual properties of `geoms`)
+  * `~` assignments are equivalent to `aes` mappings in ggplot2.
+
+Unlike [ggplot2][] [ggvis][] does not have a separate function, you use
+`ggvis()` is analogous to both `qplot()` and `ggplot()`.
+
+<div class='row'> <div class='col-md-6'>
+```{r fig.width=5.75, fig.height=5.75}
+<<diamonds_plot_ggplot2>>
+```
+</div> <div class='col-md-6'>
+```{r fig.width=5, fig.height=5}
+<<diamonds_plot_ggvis>>
+```
+</div> </div>
+
+
+For a more complicated exam, we can produce a histogram, explicitly specifying
+the geometry, its colour properties, the statistical transformation (binning)
+and its bin width property:
+
+<div class='row'> <div class='col-md-6'>
+```{r fig.width=5.75, fig.height=5.75}
+<<diamonds_hist_ggplot2>>
+```
+</div> <div class='col-md-6'>
+```{r fig.width=5, fig.height=5}
+<<diamonds_hist_ggvis>>
+```
+</div> </div>
+
+There is as default stat for every geom and vice versa. If we are working with
+defaults, we only need to specify the geom or stat, not both.
+
+[ggvis][] simplifies things and does not have the same stat and geom separation.
+
+<div class='row'> <div class='col-md-6'>
+```{r fig.width=5.75, fig.height=5.75}
+<<diamonds_stat_ggplot2>>
+```
+</div> <div class='col-md-6'>
+```{r fig.width=5, fig.height=5}
+<<diamonds_stat_ggvis>>
+```
+</div> </div>
+
+Note that in both [ggplot2][] and [ggvis][] the data is copied into the plot
+object, not just stored as a reference. This means that we can save the plot
+object and load it into another workspace, and it will have all the information
+necessary to produce the plot.
+
+## More on Aesthetic mappings
+
+In [ggplot2][] the function `aes` describes the mapping between variables and aesthetics
+(things we see in the plot). We can specify the aesthetic mappings, or update
+them later. In [ggvis][] the same effect can be done by using `~` in your assignments.
+We will explore these bindings using our height-weight data:
+
+<div class='row'> <div class='col-md-6'>
+```{r fig.width=5.75, fig.height=5.75}
+<<hw_aes_ggplot2>>
+```
+</div> <div class='col-md-6'>
+```{r fig.width=5, fig.height=5}
+<<hw_aes_ggvis>>
+```
+</div> </div>
+
+******
+
+# Examples of plots
+
+## Categorical Data Analysis
+
+We will now explore some examples of visualizations of categorical data. We
+will use the `arrests` dataset from the `effects package`, which contains
+demographic data on 5226 and information on whether they were arrested or
+released with summons for possession of marijuana. First, we experiment with
+some basic bar graphs:
+
+<div class='row'> <div class='col-md-6'>
+```{r fig.width=5.75, fig.height=5.75}
+<<arrests_bar_ggplot2>>
+```
+</div> <div class='col-md-6'>
+```{r fig.width=5, fig.height=5}
+<<arrests_bar_ggvis>>
+```
+</div> </div>
+
+We can use an overlaid histogram to visualize more dimensions:
+
+<div class='row'> <div class='col-md-6'>
+```{r fig.width=5.75, fig.height=5.75}
+<<arrests_histogram_ggplot2>>
+```
+</div> <div class='col-md-6'>
+```{r fig.width=5, fig.height=5}
+<<arrests_histogram_ggvis>>
+```
+</div> </div>
+
+Next, we can generate different kinds of box plots.  Unfortunately [ggvis][] does not yet provide box plots.
+
+<div class='row'> <div class='col-md-6'>
+```{r fig.width=5.75, fig.height=5.75}
+<<arrests_boxplot_ggplot2>>
+```
+</div> <div class='col-md-6'>
+```{r fig.width=5, fig.height=5}
+<<arrests_boxplot_ggvis>>
+```
+</div> </div>
+
+## Density Estimation
+
+Generating histograms and nonparametric density estimates is easy with
+[ggplot2][] and [ggvis][]. Here are some examples taken from the [R Cookbook](http://wiki.stdout.org/rcookbook/Graphs) by  Winston Chang:
+
+<div class='row'> <div class='col-md-6'>
+```{r, fig.width=5.75, fig.height=5.75}
+<<rcookbook_ggplot2>>
+```
+</div> <div class='col-md-6'>
+```{r, fig.width=5, fig.height=5}
+<<rcookbook_ggvis>>
+```
+</div> </div>
+
+******
+
+Conclusion
+=======
+We hope that this short tutorial gave you a sense of how [ggplot2][] and
+[ggvis][] function as powerful and flexible visualization packages, and how to
+convert between them.
+
+> [Original ggplot2 Tutorial by Alex Yakubovich, Cathia Badiere and Wei-Hao Hwang](http://rpubs.com/ayy/2176)<br>
+> Author: [Jim Hester](http://jimhester.com)<br>
+> Created: 2014 Jul 30 12:23:19 PM<br>
+> Last Modified: 2014 Aug 28 01:33:08 PM
+
+[ggplot2]: https://github.com/hadley/ggplot2
+[dplyr]: https://github.com/hadley/dplyr
+[ggvis]: https://github.com/rstudio/ggvis
+
+<a href="https://github.com/jimhester/ggplot2ToGgvis"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a>
