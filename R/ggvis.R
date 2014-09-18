@@ -127,8 +127,14 @@ dat %>% group_by(colour) %>%
 # Overlaid histograms
 Arrests %>%
   group_by(released) %>%
-  ggvis(x= ~checks, fill= ~released) %>%
+  ggvis(x=~checks, fill=~released) %>%
   layer_histograms(opacity:=1/2, stack=FALSE)
+
+## ---- arrests_boxplot_ggvis
+#specify the theme
+Arrests %>% ggvis(x=~colour, y=~checks) %>% layer_boxplots()
+
+Arrests %>% ggvis(x=~released, y=~checks) %>% layer_boxplots()
 
 ## ---- rcookbook_ggvis
 # Basic histogram from the vector "rating". Each bin is .5 wide.

@@ -328,7 +328,7 @@ We can use an overlaid histogram to visualize more dimensions:
 ```
 </div> </div>
 
-Next, we can generate different kinds of box plots.  Unfortunately [ggvis][] does not yet provide box plots.
+Next, we can generate different kinds of box plots.  Note [ggvis][] cannot do faceting yet.
 
 <div class='row'> <div class='col-md-6'>
 ```{r fig.width=5.75, fig.height=5.75}
@@ -368,7 +368,7 @@ If you liked this tutorial also see [plyrToDplyr](http://jimhester.github.io/ply
 > [Original ggplot2 Tutorial by Alex Yakubovich, Cathia Badiere and Wei-Hao Hwang](http://rpubs.com/ayy/2176)<br>
 > Author: [Jim Hester](http://jimhester.com)<br>
 > Created: 2014 Jul 30 12:23:19 PM<br>
-> Last Modified: 2014 Aug 28 03:47:00 PM
+> Last Modified: 2014 Sep 18 03:53:52 PM
 
 [ggplot2]: https://github.com/hadley/ggplot2
 [dplyr]: https://github.com/hadley/dplyr
